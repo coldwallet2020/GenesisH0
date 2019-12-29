@@ -33,7 +33,7 @@ def get_args():
                     help="the PoW algorithm: [SHA256|scrypt|X11|X13|X15]")
   parser.add_option("-p", "--pubkey", dest="pubkey", default="04678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5f",
                    type="string", help="the pubkey found in the output script")
-  parser.add_option("-v", "--value", dest="value", default=5000000000,
+  parser.add_option("-v", "--value", dest="value", default=4200000000,
                    type="int", help="the value in coins for the output, full value (exp. in bitcoin 5000000000 - To get other coins value: Block Value * 100000000)")
   parser.add_option("-b", "--bits", dest="bits",
                    type="int", help="the target in compact representation, associated to a difficulty of 1")
@@ -41,7 +41,7 @@ def get_args():
   (options, args) = parser.parse_args()
   if not options.bits:
     if options.algorithm == "scrypt" or options.algorithm == "X11" or options.algorithm == "X13" or options.algorithm == "X15":
-      options.bits = 0x1e0ffff0
+      options.bits = 0x1d00ffff
     else:
       options.bits = 0x1d00ffff
   return options
@@ -148,11 +148,7 @@ def generate_hashes_from_block(data_block, algorithm):
   elif algorithm == 'SHA256':
     header_hash = sha256_hash
   elif algorithm == 'X11':
-    try:
-      exec('import %s' % "xcoin_hash")
-    except ImportError:
-      sys.exit("Cannot run X11 algorithm: module xcoin_hash not found")
-    header_hash = xcoin_hash.getPoWHash(data_block)[::-1]
+    header_hash = sha256_hash
   elif algorithm == 'X13':
     try:
       exec('import %s' % "x13_hash")
